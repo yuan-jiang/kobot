@@ -5,3 +5,7 @@
 - Deprecated lower-case environment variables for credentials configuration
 - Updated option help doc to indicate weekends and public holidays are skipped by default
 - Updated required_ruby_version to be >= 2.4.0 to align with the webdrivers dependency
+
+### v1.2.0
+- Added an option to allow forcibly running regardless of weekends or public holidays
+- Added an ENV flag to allow requiring lib in local workspace for development purpose

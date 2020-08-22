@@ -57,15 +57,17 @@ Get help doc:
 ```
 $ kobot -h
 Usage: kobot [options]
-    -c, --clock CLOCK                The clock action: in, out
-    -l, --loglevel [LEVEL]           Specify log level: debug, info, warn, error. Default is info
+    -c, --clock CLOCK                Required; the clock action option: in, out
+    -l, --loglevel [LEVEL]           Specify log level: debug, info, warn, error; default is info
     -s, --skip [D1,D2,D3]            Specify dates to skip clock in/out with date format YYYY-MM-DD and
-                                     multiple values separated by comma, such as: 2020-05-01,2020-12-31
-                                     Weekends and public holidays in Japan are skipped by default.
-    -t, --to [TO]                    Email address to send notification to. By default it is sent to
+                                     multiple values separated by comma, such as: 2020-05-01,2020-12-31;
+                                     weekends and public holidays in Japan will be skipped by default
+    -t, --to [TO]                    Email address to send notification to; by default it is sent to
                                      the same self email account used in SMTP config as the sender
     -n, --notify                     Enable email notification
     -d, --dryrun                     Run the process without actual clock in/out
+    -f, --force                      Run the process forcibly regardless of weekends or public holidays;
+                                     must be used together with --dryrun to prevent mistaken operations
     -x, --headless                   Start browser in headless mode
     -g, --geolocation                Allow browser to use geolocation
     -h, --help                       Show this help message
