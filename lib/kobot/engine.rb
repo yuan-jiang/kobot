@@ -26,11 +26,15 @@ module Kobot
     # to be popped up and should be handled by the outside caller.
     def start
       if weekend?
-        Kobot.logger.info("Today=#{@today} is weekend.")
-        return
+        if Config.force
+          Kobot.logger.info("[Force] should have exited: today=#{@today} is weekend")
+        else
+          Kobot.logger.info("Today=#{@today} is weekend")
+          return
+        end
       end
       if holiday?
-        Kobot.logger.info("Today=#{@today} is holiday.")
+        Kobot.logger.info("Today=#{@today} is holiday")
         return
       end
       unless %i[in out].include? Config.clock
@@ -147,9 +151,29 @@ module Kobot
     end
 
     def verify_today_record!
-      raise KotRecordError, "Today=#{@today} is not found on kot." if @kot_today.strip.empty?
-      raise KotRecordError, "Today=#{@today} is marked as weekend on kot: #{@kot_today}" if kot_weekend?
-      raise KotRecordError, "Today=#{@today} is marked as public holiday on kot: #{@kot_today}" if kot_public_holiday?
+      raise KotRecordError, "Today=#{@today} is not found on kot" if @kot_today.strip.empty?
+
+      if kot_weekend?
+        unless Config.force
+          raise KotRecordError,
+                "Today=#{@today} is marked as weekend on kot: #{@kot_today}"
+        end
+
+        Kobot.logger.info(
+          "[Force] should have exited: today=#{@today} is marked as weekend on kot: #{@kot_today}"
+        )
+      end
+
+      if kot_public_holiday?
+        unless Config.force
+          raise KotRecordError,
+                "Today=#{@today} is marked as public holiday on kot: #{@kot_today}"
+        end
+
+        Kobot.logger.info(
+          "[Force] should have exited: today=#{@today} is marked as public holiday on kot: #{@kot_today}"
+        )
+      end
     end
 
     def clock_in!

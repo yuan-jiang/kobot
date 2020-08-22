@@ -9,7 +9,8 @@ module Kobot
       attr_accessor :clock,
                     :loglevel,
                     :skip,
-                    :dryrun
+                    :dryrun,
+                    :force
 
       attr_accessor :kot_url,
                     :kot_timezone_offset,

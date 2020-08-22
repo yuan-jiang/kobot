@@ -33,6 +33,7 @@ module Kobot
         config.clock                 = options[:clock].to_sym
         config.loglevel              = options[:loglevel]&.to_sym || :info
         config.dryrun                = options[:dryrun]
+        config.force                 = options[:force]
         config.skip                  = options[:skip] || []
 
         config.kot_url               = 'https://s2.kingtime.jp/independent/recorder/personal/'
