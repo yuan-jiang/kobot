@@ -1,4 +1,4 @@
-# Kobot
+# Kobot [![Gem Version](https://badge.fury.io/rb/kobot.svg)](https://badge.fury.io/rb/kobot)
 
 Kobot is a simple tool to automate the clock in or clock out operation on the web service
 provided by [KING OF TIME](kingtime.jp) by leveraging [Selenium WebDriver](selenium.dev),
