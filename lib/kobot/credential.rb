@@ -41,18 +41,22 @@ module Kobot
         if File.exist? Config.credentials_file
           File.open(Config.credentials_file) do |file|
             file.each do |line|
-              attr, value = line.chomp.split('=')
+              attr, value = line.strip.split('=')
               @credentials[attr] = value
             end
           end
         end
-        @credentials['kot_id'] = ENV['kot_id'] if ENV['kot_id']
-        @credentials['kot_password'] = ENV['kot_password'] if ENV['kot_password']
-        @credentials['gmail_id'] = ENV['gmail_id'] if ENV['gmail_id']
-        @credentials['gmail_password'] = ENV['gmail_password'] if ENV['gmail_password']
-
         required_credentials = %w[kot_id kot_password]
         required_credentials.concat %w[gmail_id gmail_password] if Config.gmail_notify_enabled
+        required_credentials.each do |attr|
+          if ENV[attr]
+            Kobot.logger.warn(
+              "[DEPRECATION] lower-case ENV variable is deprecated, please use #{attr.upcase} instead."
+            )
+          end
+          env_attr_value = ENV[attr.upcase] || ENV[attr]
+          @credentials[attr] = env_attr_value if env_attr_value
+        end
         required_credentials.none? do |attr|
           credential = @credentials[attr]
           !credential || credential.strip.empty?
