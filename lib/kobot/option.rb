@@ -24,7 +24,8 @@ module Kobot
 
           opt.on('-s', '--skip [D1,D2,D3]', Array,
                  'Specify dates to skip clock in/out with date format YYYY-MM-DD and',
-                 'multiple values separated by comma, such as: 2020-05-01,2020-12-31') do |skip|
+                 'multiple values separated by comma, such as: 2020-05-01,2020-12-31',
+                 'Weekends and public holidays in Japan are skipped by default.') do |skip|
             options[:skip] = skip
           end
 
