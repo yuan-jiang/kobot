@@ -1,8 +1,9 @@
 # Kobot [![Gem Version](https://badge.fury.io/rb/kobot.svg)](https://badge.fury.io/rb/kobot)
 
 Kobot is a simple tool to automate the clock in or clock out operation on the web service
-provided by [KING OF TIME](kingtime.jp) by leveraging [Selenium WebDriver](selenium.dev),
-and with Google Gmail service email notification can also be sent to notify the results.
+provided by [KING OF TIME](https://www.kingtime.jp/) by leveraging [Selenium WebDriver](
+https://www.selenium.dev/), and with Google Gmail service email notifications can also be
+sent to notify the results.
 
 It is meant for use only by one working under the discretionary labor system or flexible
 hours where the daily record is still required regardless of the actual start or end time
@@ -21,10 +22,11 @@ Tested on macOS Catelina and runs on Heroku platform so it works on unix-like sy
 #### Configuration
 
 By default it uses `~/.kobot` file locally to persist credentials for reuse, but all credentials
-can be overridden by setting environment variables, which is the recommended way of running the
-job on platforms like Heroku. When running for the first time, if none of the configuration file
-and ENV satisfies all required credentials, an interactive prompt will be displayed for setting,
-so there is no need to manually prepare the file beforehand. The content looks something like:
+can also be supplied or overridden by runtime environment variables, which is the recommended way
+of running as scheduled jobs on platforms like Heroku. When running for the first time, if neither
+the configuration file nor ENV satisfies all required credentials, `an interactive prompt will be
+displayed for initial setting, so there is no need to manually prepare the file beforehand`. The
+content looks something like:
 ```property
 kot_id=xxx
 kot_password=xxx
@@ -34,6 +36,7 @@ Gmail account and password (or `app` password if MFA is on) are asked when notif
 gmail_id=xxx
 gmail_password=xxx
 ```
+Note: use all upper-case letters for the above variables if using environment variables, e.g. `KOT_ID`.
 
 #### Google Chrome browser
 
@@ -51,13 +54,14 @@ $ gem install kobot
 ## Usage
 
 Get help doc:
-```bash
+```
 $ kobot -h
 Usage: kobot [options]
     -c, --clock CLOCK                The clock action: in, out
     -l, --loglevel [LEVEL]           Specify log level: debug, info, warn, error. Default is info
     -s, --skip [D1,D2,D3]            Specify dates to skip clock in/out with date format YYYY-MM-DD and
                                      multiple values separated by comma, such as: 2020-05-01,2020-12-31
+                                     Weekends and public holidays in Japan are skipped by default.
     -t, --to [TO]                    Email address to send notification to. By default it is sent to
                                      the same self email account used in SMTP config as the sender
     -n, --notify                     Enable email notification
@@ -69,20 +73,25 @@ Usage: kobot [options]
 ```
 
 Dryrun to try out:
-```bash
-$ kobot --clock in --dryrun
+```
+$ kobot --clock in --notify --dryrun
 ```
 
 Clock in/out with email notification
-```bash
-$ kobot --clock in --notify
-$ kobot --clock out --notify
+```
+$ kobot --clock in --notify --headless
+$ kobot --clock out --notify --headless
 ```
 
 Run the task with crontab
 ```cron
-30 09 * * * user kobot --clock in --notify
-30 18 * * * user kobot --clock out --notify
+# Weekend and public holidays will be skipped by default
+30 09 * * * user kobot --cin -n -x
+30 18 * * * user kobot --cout -n -x
+
+# Skip for weekdays planned to take leave for example
+30 09 * * * user kobot --cin -n -x -s 2020-09-01,2020-11-11
+30 18 * * * user kobot --cout -n -x -s 2020-09-01,2020-11-11
 ```
 On platforms like Heroku, an add-on called [Heroku Scheduler](https://elements.heroku.com/addons/scheduler) makes
 running scheduled tasks much easier. Tips: either clock in or clock out task can be scheduled multiple times in
