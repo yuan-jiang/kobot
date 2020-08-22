@@ -1,6 +1,15 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'kobot'
+begin
+  # For quickly tryout in local development
+  # without installing to system gems path
+  raise LoadError if ENV['KOBOT_DEV']
+
+  require 'kobot'
+rescue LoadError
+  $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+  require 'kobot'
+end
 
 Kobot.run
