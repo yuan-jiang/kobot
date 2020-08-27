@@ -49,11 +49,7 @@ module Kobot
         required_credentials = %w[kot_id kot_password]
         required_credentials.concat %w[gmail_id gmail_password] if Config.gmail_notify_enabled
         required_credentials.each do |attr|
-          if ENV[attr]
-            Kobot.logger.warn(
-              "[DEPRECATION] lower-case ENV variable is deprecated, please use #{attr.upcase} instead."
-            )
-          end
+          Kobot.logger.deprecate(attr, attr.upcase) if ENV[attr]
           env_attr_value = ENV[attr.upcase] || ENV[attr]
           @credentials[attr] = env_attr_value if env_attr_value
         end
