@@ -33,8 +33,8 @@ module Kobot
           return
         end
       end
-      if holiday?
-        Kobot.logger.info("Today=#{@today} is holiday")
+      if skip?
+        Kobot.logger.info("Today=#{@today} is skipped as per: --skip=#{Config.skip}")
         return
       end
       unless %i[in out].include? Config.clock
@@ -247,7 +247,7 @@ module Kobot
       @now.saturday? || @now.sunday?
     end
 
-    def holiday?
+    def skip?
       return false unless Config.skip
       return false unless Config.skip.respond_to? :include?
 
