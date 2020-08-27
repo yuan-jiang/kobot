@@ -30,7 +30,7 @@ module Kobot
         @credentials.each do |attr, value|
           send("#{attr}=".to_sym, value)
         end
-        Kobot.logger.info('Credentials load successful')
+        Kobot.logger.info('Load credentials successful')
         Kobot.logger.debug(@credentials)
       end
 

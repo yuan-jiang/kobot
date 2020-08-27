@@ -69,6 +69,7 @@ module Kobot
       Mailer.send(clock_notify_message(status: e.message))
       logout
     ensure
+      Kobot.logger.info('Close browser')
       @browser&.quit
     end
 
@@ -90,8 +91,8 @@ module Kobot
     end
 
     def login
-      @browser.get @top_url
       Kobot.logger.info("Navigate to: #{@top_url}")
+      @browser.get @top_url
       Kobot.logger.debug do
         "Login with id=#{Credential.kot_id} and password=#{Credential.kot_password}"
       end
@@ -108,13 +109,15 @@ module Kobot
           Kobot.logger.warn "Get geolocation failed: #{e.message}"
         end
       end
-      Kobot.logger.info @browser.title
+      Kobot.logger.info "Page title: #{@browser.title}"
     end
 
     def logout
       if @browser.current_url.include? 'admin'
+        Kobot.logger.info('Logout from タイムカード page')
         @browser.find_element(css: 'div.htBlock-header_logoutButton').click
       else
+        Kobot.logger.info('Logout from Myレコーダー page')
         @wait.until { @browser.find_element(id: 'menu_icon') }.click
         @wait.until { @browser.find_element(link: 'ログアウト') }.click
         @browser.switch_to.alert.accept
@@ -123,6 +126,7 @@ module Kobot
     end
 
     def read_today_record
+      Kobot.logger.info('Navigate to タイムカード page')
       @wait.until { @browser.find_element(id: 'menu_icon') }.click
       @wait.until { @browser.find_element(link: 'タイムカード') }.click
 
@@ -216,21 +220,25 @@ module Kobot
     end
 
     def click_clock_in_button
+      Kobot.logger.info("Navigate to: #{@top_url}")
       @browser.get @top_url
       clock_in_button = @wait.until { @browser.find_element(css: 'div.record-clock-in') }
       if Config.dryrun
         Kobot.logger.info('[Dryrun] clock in button (出勤) would have been clicked')
       else
+        Kobot.logger.info('Clicking the clock in button (出勤)')
         clock_in_button.click
       end
     end
 
     def click_clock_out_button
+      Kobot.logger.info("Navigate to: #{@top_url}")
       @browser.get @top_url
       clock_out_button = @wait.until { @browser.find_element(css: 'div.record-clock-out') }
       if Config.dryrun
         Kobot.logger.info('[Dryrun] clock out button (退勤) would have been clicked')
       else
+        Kobot.logger.info('Clicking the clock in button (退勤)')
         clock_out_button.click
       end
     end
