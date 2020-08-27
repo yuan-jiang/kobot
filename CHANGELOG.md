@@ -9,3 +9,8 @@
 ### v1.2.0
 - Added an option to allow forcibly running regardless of weekends or public holidays
 - Added an ENV flag to allow requiring lib in local workspace for development purpose
+
+### v1.2.1
+- Improved logging for better readability in logs
+- Switched to builtin Logger#deprecate from Logger#warn for deprecations
+- Renamed internal method to skip? from holiday? as it was meant for skipping any specified date
