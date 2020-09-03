@@ -3,11 +3,9 @@
 require 'optparse'
 
 module Kobot
-
   # Responsible for parsing the command line options for custom execution.
   class Option
     class << self
-
       # Parses command line options and returns a hash containing the options.
       def parse!
         options = {}

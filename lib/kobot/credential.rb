@@ -4,7 +4,6 @@ module Kobot
   # Credentials include id and password to login to KOT and
   # Gmail SMTP id and password to send email notifications.
   class Credential
-
     class << self
       attr_accessor :kot_id,
                     :kot_password,

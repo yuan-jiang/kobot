@@ -3,11 +3,9 @@
 require 'net/smtp'
 
 module Kobot
-
   # Responsible for sending email notifications in SMTP with Gmail
   class Mailer
     class << self
-
       # Sends email in preconfigured Gmail SMTP credential and to the recipient
       # configured by #{Config.gmail_notify_to} or self if not configured, with
       # email subject set by #{Config.gmail_notify_subject}.

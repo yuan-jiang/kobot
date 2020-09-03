@@ -6,7 +6,6 @@ module Kobot
   # The core class that launches browser, logins to KOT, reads today
   # record, and conducts clock in or clock out action based on config.
   class Engine
-
     def initialize
       @now = Time.now.getlocal(Config.kot_timezone_offset)
       @today = @now.strftime(Config.kot_date_format)
@@ -141,8 +140,12 @@ module Kobot
         @kot_today = date_cell.text
         @kot_today_css_class = date_cell.attribute('class')
         @kot_today_type = tr.find_element(css: 'td.work_day_type').text
-        @kot_today_clock_in = tr.find_element(css: 'td.start_end_timerecord[data-ht-sort-index="START_TIMERECORD"]').text
-        @kot_today_clock_out = tr.find_element(css: 'td.start_end_timerecord[data-ht-sort-index="END_TIMERECORD"]').text
+        @kot_today_clock_in = tr.find_element(
+          css: 'td.start_end_timerecord[data-ht-sort-index="START_TIMERECORD"]'
+        ).text
+        @kot_today_clock_out = tr.find_element(
+          css: 'td.start_end_timerecord[data-ht-sort-index="END_TIMERECORD"]'
+        ).text
         Kobot.logger.debug do
           {
             kot_toay: @kot_today,
@@ -160,26 +163,19 @@ module Kobot
       raise KotRecordError, "Today=#{@today} is not found on kot" if @kot_today.strip.empty?
 
       if kot_weekend?
-        unless Config.force
-          raise KotRecordError,
-                "Today=#{@today} is marked as weekend on kot: #{@kot_today}"
-        end
+        raise KotRecordError, "Today=#{@today} is marked as weekend on kot: #{@kot_today}" unless Config.force
 
         Kobot.logger.info(
           "[Force] should have exited: today=#{@today} is marked as weekend on kot: #{@kot_today}"
         )
       end
 
-      if kot_public_holiday?
-        unless Config.force
-          raise KotRecordError,
-                "Today=#{@today} is marked as public holiday on kot: #{@kot_today}"
-        end
+      return unless kot_public_holiday?
+      raise KotRecordError, "Today=#{@today} is marked as public holiday on kot: #{@kot_today}" unless Config.force
 
-        Kobot.logger.info(
-          "[Force] should have exited: today=#{@today} is marked as public holiday on kot: #{@kot_today}"
-        )
-      end
+      Kobot.logger.info(
+        "[Force] should have exited: today=#{@today} is marked as public holiday on kot: #{@kot_today}"
+      )
     end
 
     def clock_in!

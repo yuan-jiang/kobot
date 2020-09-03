@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Kobot
-
   class KotRecordError < StandardError
   end
 
@@ -10,5 +9,4 @@ module Kobot
 
   class KotClockOutError < StandardError
   end
-
 end

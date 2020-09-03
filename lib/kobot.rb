@@ -14,8 +14,6 @@ require 'kobot/engine'
 # and with Google Gmail service email notification can also be sent to notify the results.
 module Kobot
   class << self
-
-    # The entrance to run Kobot.
     def run
       configure
       Engine.new.start

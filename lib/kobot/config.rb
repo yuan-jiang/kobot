@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Kobot
-
   # Configuration definition includes static ones hardcoded and
   # dynamic ones that can be specified by command line options.
   class Config
