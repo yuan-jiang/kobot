@@ -14,3 +14,7 @@
 - Improved logging for better readability in logs
 - Switched to builtin Logger#deprecate from Logger#warn for deprecations
 - Renamed internal method to skip? from holiday? as it was meant for skipping any specified date
+
+### v1.2.2
+- Improved login screen wait and logging
+- Applied fix for offenses about empty lines and long lines reported by Rubocop
