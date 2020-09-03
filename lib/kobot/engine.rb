@@ -93,6 +93,8 @@ module Kobot
     def login
       Kobot.logger.info("Navigate to: #{@top_url}")
       @browser.get @top_url
+      @wait.until { @browser.find_element(id: 'modal_window') }
+      Kobot.logger.info "Page title: #{@browser.title}"
       Kobot.logger.debug do
         "Login with id=#{Credential.kot_id} and password=#{Credential.kot_password}"
       end
