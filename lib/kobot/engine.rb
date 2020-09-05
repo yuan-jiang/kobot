@@ -24,32 +24,19 @@ module Kobot
     # System errors or any unknown exceptions occurred if any are
     # to be popped up and should be handled by the outside caller.
     def start
-      if weekend?
-        if Config.force
-          Kobot.logger.info("[Force] should have exited: today=#{@today} is weekend")
-        else
-          Kobot.logger.info("Today=#{@today} is weekend")
-          return
-        end
-      end
-      if skip?
-        Kobot.logger.info("Today=#{@today} is skipped as per: --skip=#{Config.skip}")
-        return
-      end
-      unless %i[in out].include? Config.clock
-        Kobot.logger.warn("Invalid clock operation: #{Config.clock}")
-        return
-      end
+      validate_today!
       launch_browser
       login
       read_today_record
-      verify_today_record!
+      validate_today_record!
       if Config.clock == :in
         clock_in!
       else
         clock_out!
       end
       logout
+    rescue KotSkip => e
+      Kobot.logger.warn(e.message)
     rescue KotRecordError => e
       Kobot.logger.warn(e.message)
       Mailer.send(clock_notify_message(status: e.message))
@@ -68,11 +55,19 @@ module Kobot
       Mailer.send(clock_notify_message(status: e.message))
       logout
     ensure
-      Kobot.logger.info('Close browser')
-      @browser&.quit
+      close_browser
     end
 
     private
+
+    def validate_today!
+      raise KotSkip, "Today=#{@today} is skipped as per: --skip=#{Config.skip}" if skip?
+
+      return unless weekend?
+      raise KotSkip, "Today=#{@today} is weekend" unless Config.force
+
+      Kobot.logger.info("[Force] should have exited: today=#{@today} is weekend")
+    end
 
     def launch_browser
       prefs = {
@@ -87,6 +82,13 @@ module Kobot
       @browser = Selenium::WebDriver.for(:chrome, options: options)
       @wait = Selenium::WebDriver::Wait.new(timeout: Config.browser_wait_timeout)
       Kobot.logger.info('Launch browser successful')
+    end
+
+    def close_browser
+      return unless @browser
+
+      Kobot.logger.info('Close browser')
+      @browser.quit
     end
 
     def login
@@ -159,7 +161,7 @@ module Kobot
       end
     end
 
-    def verify_today_record!
+    def validate_today_record!
       raise KotRecordError, "Today=#{@today} is not found on kot" if @kot_today.strip.empty?
 
       if kot_weekend?

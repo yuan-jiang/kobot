@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module Kobot
+  class KotSkip < StandardError
+  end
+
   class KotRecordError < StandardError
   end
 
