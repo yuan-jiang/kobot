@@ -18,3 +18,7 @@
 ### v1.2.2
 - Improved login screen wait and logging
 - Applied fix for offenses about empty lines and long lines reported by Rubocop
+
+### v1.2.3
+- Improved validation logic to skip running due to weekend or intentional skips
+- Refactored engine by reducing methods length based on reports by Rubocop
