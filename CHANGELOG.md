@@ -22,3 +22,6 @@
 ### v1.2.3
 - Improved validation logic to skip running due to weekend or intentional skips
 - Refactored engine by reducing methods length based on reports by Rubocop
+
+### v1.2.4
+- Changed to use boolean values for validation instead of raising exceptions
