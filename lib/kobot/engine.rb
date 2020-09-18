@@ -14,7 +14,7 @@ module Kobot
 
     # The entrance where the whole flow starts.
     #
-    # It exits early if today is weekend or treated as holiday by
+    # It exits early if today is weekend or marked as to skip by
     # the #{Config.skip} specified from command line option --skip.
     #
     # Unexpected behavior such as record appearing as holiday on
@@ -24,7 +24,8 @@ module Kobot
     # System errors or any unknown exceptions occurred if any are
     # to be popped up and should be handled by the outside caller.
     def start
-      validate_today!
+      return unless should_run_today?
+
       launch_browser
       login
       read_today_record
@@ -35,8 +36,6 @@ module Kobot
         clock_out!
       end
       logout
-    rescue KotSkip => e
-      Kobot.logger.warn(e.message)
     rescue KotRecordError => e
       Kobot.logger.warn(e.message)
       Mailer.send(clock_notify_message(status: e.message))
@@ -60,13 +59,16 @@ module Kobot
 
     private
 
-    def validate_today!
-      raise KotSkip, "Today=#{@today} is skipped as per: --skip=#{Config.skip}" if skip?
+    def should_run_today?
+      if skip?
+        Kobot.logger.warn("Today=#{@today} is skipped as per: --skip=#{Config.skip}")
+        return false
+      end
+      return true unless weekend?
 
-      return unless weekend?
-      raise KotSkip, "Today=#{@today} is weekend" unless Config.force
-
-      Kobot.logger.info("[Force] should have exited: today=#{@today} is weekend")
+      Kobot.logger.info("[Force] should have exited: today=#{@today} is weekend") if Config.force
+      Kobot.logger.warn("Today=#{@today} is weekend") unless Config.force
+      Config.force
     end
 
     def launch_browser
